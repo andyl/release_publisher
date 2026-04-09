@@ -1,11 +1,11 @@
-defmodule ReleasePub.MixProject do
+defmodule ReleasePublisher.MixProject do
   use Mix.Project
 
   @version "0.0.1"
 
   def project do
     [
-      app: :release_pub,
+      app: :release_publisher,
       version: @version,
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
@@ -23,6 +23,10 @@ defmodule ReleasePub.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # YAML parsing for config/release_publisher.yml.
+      # Consumers add this tool with `runtime: false`, so yaml_elixir
+      # only loads at publish time and never ships in a consumer release.
+      {:yaml_elixir, "~> 2.9"},
       # Repo Tooling
       {:igniter, "~> 0.6", only: [:dev, :test]},
       # AI Tooling

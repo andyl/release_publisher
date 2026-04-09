@@ -1,0 +1,16 @@
+# release_publisher config
+#
+# Each entry under `publish:` is a publisher. Publishers run
+# sequentially in declared order. Remove or comment out anything
+# you don't need.
+#
+# This file is a stable public contract: downstream deploy tools are
+# expected to read it to discover where tarballs were published.
+
+publish:
+  - type: github
+    draft: false
+    prerelease: false
+
+  # - type: file
+  #   path: /mnt/releases/myapp/

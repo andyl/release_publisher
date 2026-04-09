@@ -1,0 +1,3 @@
+publish:
+  - type: rsync
+    host: example.com

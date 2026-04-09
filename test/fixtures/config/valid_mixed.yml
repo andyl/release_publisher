@@ -1,0 +1,6 @@
+publish:
+  - type: github
+    draft: false
+    prerelease: false
+  - type: file
+    path: /mnt/releases/myapp
