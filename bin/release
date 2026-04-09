@@ -1,0 +1,7 @@
+#!/usr/bin/env bash 
+
+# release script 
+
+mix git_ops.release 
+git push --follow-tags 
+
