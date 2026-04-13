@@ -6,11 +6,8 @@ a local or mounted filesystem path, etc.).
 
 It does not build. It does not deploy. It does not fetch. It publishes.
 
-`release_publisher` is the "publish" half of a deliberate split from
-`relman`: `mix release` builds the tarball, `mix release.publish` uploads
-it, and a separate deploy tool fetches and installs it. Each half stays
-independently callable and trivially composable.
-
+The `mix release` task builds the tarball, `mix release.publish` uploads it.
+A separate deploy task can fetch and installs it. 
 
 ## Installation
 
