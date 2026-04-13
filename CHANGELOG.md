@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.2.4 (2026-04-13)
+
+
+
+
+### Bug Fixes:
+
+* update tarball path by andyl
+
 ## v0.2.3 (2026-04-13)
 
 
