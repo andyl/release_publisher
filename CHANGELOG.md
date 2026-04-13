@@ -5,6 +5,19 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## v0.2.2 (2026-04-13)
+
+
+
+
+### Bug Fixes:
+
+* update release script by andyl
+
+* asdf by andyl
+
+* add igniter installer by andyl
+
 ## v0.2.1 (2026-04-09)
 
 
