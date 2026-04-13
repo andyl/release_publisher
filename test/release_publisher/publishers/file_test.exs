@@ -8,9 +8,9 @@ defmodule ReleasePublisher.Publishers.FileTest do
 
   defp make_tarball(tmp_dir, app \\ "myapp", version \\ "1.0.0") do
     # Build the conventional path for Tarball.verify to find.
-    rel_dir = Path.join([tmp_dir, "_build/prod/rel/#{app}"])
-    File.mkdir_p!(rel_dir)
-    tar = Path.join(rel_dir, "#{app}-#{version}.tar.gz")
+    build_dir = Path.join([tmp_dir, "_build/prod"])
+    File.mkdir_p!(build_dir)
+    tar = Path.join(build_dir, "#{app}-#{version}.tar.gz")
     File.write!(tar, "FAKE TARBALL")
     tar
   end

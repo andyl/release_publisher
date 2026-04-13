@@ -5,7 +5,7 @@ defmodule ReleasePublisher.Tarball do
   `release_publisher` does not build releases; it expects `mix release`
   to have already produced a tarball at the conventional path:
 
-      _build/prod/rel/<app>/<app>-<version>.tar.gz
+      _build/prod/<app>-<version>.tar.gz
 
   The path is convention-only in v1. There is no `tarball_path:`
   override in the config.
@@ -19,7 +19,7 @@ defmodule ReleasePublisher.Tarball do
   @spec expected_path(atom() | String.t(), String.t()) :: Path.t()
   def expected_path(app, version) do
     app_str = to_string(app)
-    Path.join(["_build", "prod", "rel", app_str, "#{app_str}-#{version}.tar.gz"])
+    Path.join(["_build", "prod", "#{app_str}-#{version}.tar.gz"])
   end
 
   @doc """

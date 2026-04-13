@@ -5,17 +5,17 @@ defmodule ReleasePublisher.TarballTest do
 
   test "expected_path/2 returns the conventional path" do
     assert Tarball.expected_path(:myapp, "1.2.3") ==
-             "_build/prod/rel/myapp/myapp-1.2.3.tar.gz"
+             "_build/prod/myapp-1.2.3.tar.gz"
 
     assert Tarball.expected_path("myapp", "1.2.3") ==
-             "_build/prod/rel/myapp/myapp-1.2.3.tar.gz"
+             "_build/prod/myapp-1.2.3.tar.gz"
   end
 
   @tag :tmp_dir
   test "verify/2 returns ok when tarball exists", %{tmp_dir: tmp_dir} do
-    rel_dir = Path.join(tmp_dir, "_build/prod/rel/myapp")
-    File.mkdir_p!(rel_dir)
-    File.write!(Path.join(rel_dir, "myapp-1.0.0.tar.gz"), "")
+    build_dir = Path.join(tmp_dir, "_build/prod")
+    File.mkdir_p!(build_dir)
+    File.write!(Path.join(build_dir, "myapp-1.0.0.tar.gz"), "")
 
     prev = File.cwd!()
     File.cd!(tmp_dir)
