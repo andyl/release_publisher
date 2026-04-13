@@ -28,7 +28,7 @@ defmodule ReleasePublisher.MixProject do
       # only loads at publish time and never ships in a consumer release.
       {:yaml_elixir, "~> 2.9"},
       # Repo Tooling
-      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:igniter, "~> 0.6"},
       # AI Tooling
       {:usage_rules, "~> 1.2", only: [:dev, :test]},
       # Conventional Commits, Releases
