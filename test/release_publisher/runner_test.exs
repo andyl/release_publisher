@@ -57,9 +57,12 @@ defmodule ReleasePublisher.RunnerTest do
   end
 
   test "global preflight error aborts before publish", %{tmp_dir: tmp_dir} do
-    # file publisher with non-existent path → preflight error
+    # file publisher with path pointing at a file (not a dir) → preflight error
+    not_a_dir = Path.join(tmp_dir, "nope")
+    File.write!(not_a_dir, "I am a file, not a directory")
+
     entries = [
-      %{"type" => "file", "path" => Path.join(tmp_dir, "nope")}
+      %{"type" => "file", "path" => not_a_dir}
     ]
 
     capture_io(fn ->

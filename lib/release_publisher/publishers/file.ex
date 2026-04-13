@@ -6,12 +6,14 @@ defmodule ReleasePublisher.Publishers.File do
   Preflight:
 
     1. `path` is set.
-    2. `path` is absolute (relative paths are explicitly rejected — a
+    2. `~/` paths are expanded to the user's home directory.
+       `~user/` forms are rejected.
+    3. `path` is absolute (relative paths are explicitly rejected — a
        typo should never silently write into the current directory).
-    3. `path` exists and is a writable directory.
-    4. No file named `<app>-<version>.tar.gz` exists at `path` (unless
+    4. `path` is auto-created if it does not exist. Must be writable.
+    5. No file named `<app>-<version>.tar.gz` exists at `path` (unless
        `--replace`).
-    5. Tarball exists at the conventional build path.
+    6. Tarball exists at the conventional build path.
 
   `publish/4` uses `File.cp!/2`. `--replace` overwrites in place.
   """
@@ -23,7 +25,9 @@ defmodule ReleasePublisher.Publishers.File do
   @impl true
   def preflight(entry) do
     with {:ok, path} <- check_path_set(entry),
+         {:ok, path} <- expand_tilde(entry, path),
          :ok <- check_absolute(entry, path),
+         :ok <- ensure_dir(entry, path),
          :ok <- check_dir_writable(entry, path),
          :ok <- check_no_collision(entry, path),
          :ok <- check_tarball(entry) do
@@ -77,6 +81,22 @@ defmodule ReleasePublisher.Publishers.File do
     end
   end
 
+  defp expand_tilde(_entry, "~/" <> rest) do
+    {:ok, Path.expand("~/" <> rest)}
+  end
+
+  defp expand_tilde(entry, "~" <> _ = path) do
+    {:error,
+     Error.new(
+       publisher: identity(entry),
+       step: "preflight:path",
+       message: "path #{inspect(path)} uses ~user syntax which is not supported",
+       fix: "use ~/... (current user) or a fully absolute path"
+     )}
+  end
+
+  defp expand_tilde(_entry, path), do: {:ok, path}
+
   defp check_absolute(entry, path) do
     if Path.type(path) == :absolute do
       :ok
@@ -91,17 +111,24 @@ defmodule ReleasePublisher.Publishers.File do
     end
   end
 
-  defp check_dir_writable(entry, path) do
-    cond do
-      not File.exists?(path) ->
+  defp ensure_dir(entry, path) do
+    case File.mkdir_p(path) do
+      :ok ->
+        :ok
+
+      {:error, reason} ->
         {:error,
          Error.new(
            publisher: identity(entry),
            step: "preflight:path",
-           message: "path #{path} does not exist",
-           fix: "create #{path} as a writable directory"
+           message: "could not create directory #{path}: #{reason}",
+           fix: "create #{path} manually or check parent permissions"
          )}
+    end
+  end
 
+  defp check_dir_writable(entry, path) do
+    cond do
       not File.dir?(path) ->
         {:error,
          Error.new(

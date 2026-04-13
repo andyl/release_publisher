@@ -52,10 +52,48 @@ defmodule ReleasePublisher.Publishers.FileTest do
       assert msg =~ "not absolute"
     end
 
-    test "rejects missing directory", %{tmp_dir: tmp_dir} do
+    test "auto-creates missing directory", %{tmp_dir: tmp_dir} do
+      target = Path.join(tmp_dir, "new/nested/dir")
+      _tar = make_tarball(tmp_dir)
+
       entry = %{
         "type" => "file",
-        "path" => Path.join(tmp_dir, "nope"),
+        "path" => target,
+        :app => "myapp",
+        :version => "1.0.0",
+        :replace => false
+      }
+
+      assert :ok = with_cwd(tmp_dir, fn -> FilePub.preflight(entry) end)
+      assert File.dir?(target)
+    end
+
+    test "expands tilde path", %{tmp_dir: tmp_dir} do
+      _tar = make_tarball(tmp_dir)
+      home = System.user_home!()
+
+      entry = %{
+        "type" => "file",
+        "path" => "~/some_release_dir_test",
+        :app => "myapp",
+        :version => "1.0.0",
+        :replace => false
+      }
+
+      expanded = Path.join(home, "some_release_dir_test")
+
+      try do
+        assert :ok = with_cwd(tmp_dir, fn -> FilePub.preflight(entry) end)
+        assert File.dir?(expanded)
+      after
+        File.rm_rf!(expanded)
+      end
+    end
+
+    test "rejects ~user/ path syntax", %{tmp_dir: tmp_dir} do
+      entry = %{
+        "type" => "file",
+        "path" => "~otheruser/releases",
         :app => "myapp",
         :version => "1.0.0"
       }
@@ -63,7 +101,7 @@ defmodule ReleasePublisher.Publishers.FileTest do
       assert {:error, %Error{step: "preflight:path", message: msg}} =
                with_cwd(tmp_dir, fn -> FilePub.preflight(entry) end)
 
-      assert msg =~ "does not exist"
+      assert msg =~ "~user syntax"
     end
 
     test "rejects collision without --replace", %{tmp_dir: tmp_dir} do
